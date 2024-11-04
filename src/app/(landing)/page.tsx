@@ -1,8 +1,9 @@
 import { Check } from "lucide-react"
 
+import MockDiscordUI from "@/components/mock-discord-ui"
 import Heading from "../../components/heading"
-import MaxWidthWrapper from "../../components/max-width-wrapper" 
-import ShinyButton from "../../components/shiny-button" 
+import MaxWidthWrapper from "../../components/max-width-wrapper"
+import ShinyButton from "../../components/shiny-button"
 
 const page = () => {
   return (
@@ -36,23 +37,35 @@ const page = () => {
                 "Track sales, new users, or any other event",
               ].map((item, index) => (
                 <li key={index} className="flex gap-1.5 items-center text-left">
-                  <Check className="size-5 shrink-0 text-brand-700"/>
+                  <Check className="size-5 shrink-0 text-brand-700" />
                   {item}
                 </li>
               ))}
             </ul>
 
             <div className="w-full max-w-80">
-              <ShinyButton 
-              href="/sign-up"
-              className="relative z-10 h-14 w-full text-base shadow-lg transition-shadow duration-300 hover:shadow-xl">
+              <ShinyButton
+                href="/sign-up"
+                className="relative z-10 h-14 w-full text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
+              >
                 Start for Free today
               </ShinyButton>
             </div>
           </div>
         </MaxWidthWrapper>
       </section>
-      <section></section>
+
+      <section className="relative bg-brand-25 pb-4">
+        <div className="absolute inset-x-0 top-24 bottom-24 bg-brand-700" />
+        <div className="relative mx-auto">
+          <MaxWidthWrapper className="relative">
+            <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
+              <MockDiscordUI>
+              </MockDiscordUI>
+            </div>
+          </MaxWidthWrapper>
+        </div>
+      </section>
       <section></section>
       <section></section>
     </>
