@@ -1,4 +1,4 @@
-import { Check } from "lucide-react"
+import { Check, Star } from "lucide-react"
 import Image from "next/image"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
@@ -9,9 +9,9 @@ import MaxWidthWrapper from "../../components/max-width-wrapper"
 import ShinyButton from "../../components/shiny-button"
 import { AnimatedList } from "@/components/ui/animated-list"
 import DiscordMessage from "@/components/discord-message"
+import { Icons } from "@/components/icons"
 
 const page = () => {
-
   const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
     method: "POST",
     body: JSON.stringify({
@@ -26,9 +26,10 @@ const page = () => {
       Authorization: "Bearer <YOUR_API_KEY>"
     }
   })`
-  
+
   return (
     <>
+      {/*Heading */}
       <section className="relative py-24 sm:py-32 bg-brand-25">
         <MaxWidthWrapper className="px-4">
           <div className="relative mx-auto text-center flex flex-col items-center gap-10">
@@ -76,6 +77,7 @@ const page = () => {
         </MaxWidthWrapper>
       </section>
 
+      {/*Discord UI */}
       <section className="relative bg-brand-25 pb-4">
         <div className="absolute inset-x-0 top-24 bottom-24 bg-brand-700" />
         <div className="relative mx-auto">
@@ -130,6 +132,7 @@ const page = () => {
         </div>
       </section>
 
+      {/*Bento Grid */}
       <section className="relative py-24 sm:py-32 bg-brand-25">
         <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-28">
           <div>
@@ -235,7 +238,8 @@ const page = () => {
                     Easy Integration
                   </p>
                   <p className="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">
-                    Connect PingPanda with your existing workflows in minutes and call our intuitive logging API from any language.
+                    Connect PingPanda with your existing workflows in minutes
+                    and call our intuitive logging API from any language.
                   </p>
                 </div>
 
@@ -251,19 +255,20 @@ const page = () => {
 
                     <div className="overflow-hidden">
                       <div className="max-h-[30rem]">
-                        <SyntaxHighlighter language="typescript"
-                        style={{
-                          ...oneDark,
-                          'pre[class*="language-"]': {
-                            ...oneDark['pre[class*="language-"]'],
-                            background: "transparent",
-                            overflow: "hidden"
-                          },
-                          'code[class*="language-"]': {
-                            ...oneDark['code[class*="language-"]'],
-                            background: "transparent",
-                          },
-                        }}
+                        <SyntaxHighlighter
+                          language="typescript"
+                          style={{
+                            ...oneDark,
+                            'pre[class*="language-"]': {
+                              ...oneDark['pre[class*="language-"]'],
+                              background: "transparent",
+                              overflow: "hidden",
+                            },
+                            'code[class*="language-"]': {
+                              ...oneDark['code[class*="language-"]'],
+                              background: "transparent",
+                            },
+                          }}
                         >
                           {codeSnippet}
                         </SyntaxHighlighter>
@@ -278,7 +283,94 @@ const page = () => {
           </div>
         </MaxWidthWrapper>
       </section>
-      <section></section>
+
+      {/*Customer Reviews Section */}
+      <section className="relative py-24 sm:py-32 bg-white">
+        <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-28">
+          <div>
+            <h2 className="text-center text-base/7 font-semibold text-brand-600">
+              Real-World Experiences
+            </h2>
+            <Heading className="text-center">What our customers say</Heading>
+          </div>
+
+          <div className="mx-auto grid grid-cols-1 max-w-2xl px-4 lg:mx-0 lg:max-w-none lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
+            {/*First Customer review */}
+            <div className="flex flex-auto flex-col gap-4 bg-brand-25 p-6 sm:p-8 lg:p-16 rounded-t-[2rem] lg:rounded-tr-none lg:rounded-l-[2rem]">
+              <div className="flex gap-0.5 justify-center mb-2 lg:justify-start">
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+              </div>
+
+              <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-brand-950 text-center lg:text-left text-pretty">
+                PingPanda has been a game-changer for me. I&apos;ve been using
+                it for two months now and seeing sales pop up in real-time is
+                super satisfying.
+              </p>
+
+              <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
+                <Image
+                  src="/user-2.png"
+                  alt="Random User"
+                  className="rounded-full object-cover"
+                  width={48}
+                  height={48}
+                />
+                <div className="flex flex-col items-center sm:items-start">
+                  <p className="font-semibold flex items-center">
+                    Shreyanka Patil
+                    <Icons.verificationBadge className="size-4 inline-block ml-1.5" />
+                  </p>
+                  <p className="text-sm text-gray-600">@shreya_patil</p>
+                </div>
+              </div>
+            </div>
+
+            {/*Second Customer Review */}
+            <div className="flex flex-auto flex-col gap-4 bg-brand-25 p-6 sm:p-8 lg:p-16 rounded-b-[2rem] lg:rounded-bl-none lg:rounded-r-[2rem]">
+              <div className="flex gap-0.5 justify-center mb-2 lg:justify-start">
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+                <Star className="size-5 text-brand-600 fill-brand-600" />
+              </div>
+
+              <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-brand-950 text-center lg:text-left text-pretty">
+                PingPanda&apos;s been paying off for our SaaS. Nice to have
+                simple way to see how we&apos;re doing day-to-day. Definitely
+                makes our lives easier.
+              </p>
+
+              <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
+                <Image
+                  src="/user-1.png"
+                  className="rounded-full object-cover"
+                  alt="Random user"
+                  width={48}
+                  height={48}
+                />
+                <div className="flex flex-col items-center sm:items-start">
+                  <p className="font-semibold flex items-center">
+                    Kai Durant
+                    <Icons.verificationBadge className="size-4 inline-block ml-1.5" />
+                  </p>
+                  <p className="text-sm text-gray-600">@kdurant_</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ShinyButton
+            href="/sign-up"
+            className="relative z-10 h-14 w-full max-w-xs text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
+          >
+            Start for free today
+          </ShinyButton>
+        </MaxWidthWrapper>
+      </section>
     </>
   )
 }
