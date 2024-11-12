@@ -1,6 +1,6 @@
 "use client"
 
-import { useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { PropsWithChildren, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,6 +11,7 @@ import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { cn } from "@/utils"
 import { Button } from "./ui/button"
+import { client } from "@/lib/client"
 
 const EVENT_CATEGORY_VALIDATOR = z.object({
   name: CATEGORY_NAME_VALIDATOR,
@@ -53,6 +54,16 @@ export const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
 
+  const { mutate: createEventCategory, isPending } = useMutation({
+    mutationFn: async (data: EventCategoryForm) => {
+      await client.category.createEventCategory.$post(data)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-event-categories"] })
+      setIsOpen(false)
+    },
+  })
+
   const {
     register,
     handleSubmit,
@@ -66,7 +77,9 @@ export const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
   const color = watch("color")
   const selectedEmoji = watch("emoji")
 
-  const onSubmit = (data: EventCategoryForm) => {}
+  const onSubmit = (data: EventCategoryForm) => {
+    createEventCategory(data)
+  }
 
   return (
     <>
@@ -166,7 +179,9 @@ export const CreateEventCategoryModal = ({ children }: PropsWithChildren) => {
             >
               Cancel
             </Button>
-            <Button type="submit">Create Category</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Creating..." : "Create Category"}
+            </Button>
           </div>
         </form>
       </Modal>
