@@ -6,6 +6,7 @@ import { privateProcedure } from "../procedures"
 import { z } from "zod"
 import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator"
 import { parseColor } from "@/utils"
+import { HTTPException } from "hono/http-exception"
 
 export const categoryRouter = router({
   getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
@@ -105,26 +106,51 @@ export const categoryRouter = router({
           name: name.toLowerCase(),
           color: parseColor(color),
           emoji,
-          userId: user.id
-        }
+          userId: user.id,
+        },
       })
-      return c.json({eventCategory})
+      return c.json({ eventCategory })
     }),
 
-  insertQuickStartCategories: privateProcedure.mutation(
-    async ({c, ctx}) => {
-      const categories = await db.eventCategory.createMany({
-        data: [
-          { name: "bug", emoji: "🐛", color: 0xff6b6b },
-          { name: "sale", emoji: "💰", color: 0xffeb3b },
-          { name: "question", emoji: "🤔", color: 0x6c5ce7 },
-        ].map((category) => ({
-          ...category,
-          userId: ctx.user.id
-        }))
+  insertQuickStartCategories: privateProcedure.mutation(async ({ c, ctx }) => {
+    const categories = await db.eventCategory.createMany({
+      data: [
+        { name: "bug", emoji: "🐛", color: 0xff6b6b },
+        { name: "sale", emoji: "💰", color: 0xffeb3b },
+        { name: "question", emoji: "🤔", color: 0x6c5ce7 },
+      ].map((category) => ({
+        ...category,
+        userId: ctx.user.id,
+      })),
+    })
+
+    return c.json({ count: categories.count })
+  }),
+
+  pollCategory: privateProcedure
+    .input(
+      z.object({
+        name: CATEGORY_NAME_VALIDATOR,
+      })
+    )
+    .query(async ({ c, ctx, input }) => {
+      const { name } = input
+
+      const category = await db.eventCategory.findUnique({
+        where: { name_userId: { name, userId: ctx.user.id } },
+        include: {
+          _count: true,
+        },
       })
 
-      return c.json({count: categories.count})
-    }
-  )
+      if (!category) {
+        throw new HTTPException(404, {
+          message: `Category "${name}" not found`,
+        })
+      }
+
+      const hasEvents = category._count.events > 0
+
+      return c.json({ hasEvents })
+    }),
 })
