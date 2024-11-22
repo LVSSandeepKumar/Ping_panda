@@ -334,9 +334,8 @@ export const CategoryPageContent = ({
                   </TableRow>
                 ))
               ) : table.getRowModel().rows.length ? (
-                table
-                  .getRowModel()
-                  .rows.map((row) => <TableRow key={row.id}>
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -345,7 +344,8 @@ export const CategoryPageContent = ({
                         )}
                       </TableCell>
                     ))}
-                  </TableRow>)
+                  </TableRow>
+                ))
               ) : (
                 <TableRow>
                   <TableCell
@@ -363,18 +363,18 @@ export const CategoryPageContent = ({
 
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage() || isFetching}
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage() || isFetching}
         >
           Previous
         </Button>
         <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage() || isFetching}
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage() || isFetching}
         >
           Next
         </Button>
