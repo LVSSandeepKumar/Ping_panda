@@ -3,13 +3,14 @@
 import { Event, EventCategory } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
 import { EmptyCategoryState } from "./empty-category-state"
-import { useMemo, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { client } from "@/lib/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
 import { ArrowUpDown, BarChart } from "lucide-react"
 import { isAfter, isToday, startOfMonth, startOfWeek } from "date-fns"
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -35,7 +36,7 @@ import {
 } from "@/components/ui/table"
 
 interface CategoryPageContentProps {
-  hasEvents: Boolean
+  hasEvents: boolean
   category: EventCategory
 }
 
@@ -61,10 +62,6 @@ export const CategoryPageContent = ({
     queryKey: ["category", category.name, "hasEvents"],
     initialData: { hasEvents: initialHasEvents },
   })
-
-  if (!pollingData.hasEvents) {
-    return <EmptyCategoryState categoryName={category.name} />
-  }
 
   const { data, isFetching } = useQuery({
     queryKey: [
@@ -126,24 +123,23 @@ export const CategoryPageContent = ({
       {
         accessorKey: "deliveryStatus",
         header: "Delivery Status",
-        cell: ({ row }) => {
-          return (
-            <span
-              className={cn("px-2 py-1 rounded-full text-xs font-semibold", {
-                "bg-green-100 text-green-600":
-                  row.getValue("deliveryStatus") === "DELIVERED",
-                "bg-red-100 text-red-600":
-                  row.getValue("deliveryStatus") === "FAILED",
-                "bg-yellow-100 text-yellow-600":
-                  row.getValue("deliveryStatus") === "PENDING",
-              })}
-            >
-              {row.getValue("deliveryStatus")}
-            </span>
-          )
-        },
+        cell: ({ row }) => (
+          <span
+            className={cn("px-2 py-1 rounded-full text-xs font-semibold", {
+              "bg-green-100 text-green-800":
+                row.getValue("deliveryStatus") === "DELIVERED",
+              "bg-red-100 text-red-800":
+                row.getValue("deliveryStatus") === "FAILED",
+              "bg-yellow-100 text-yellow-800":
+                row.getValue("deliveryStatus") === "PENDING",
+            })}
+          >
+            {row.getValue("deliveryStatus")}
+          </span>
+        ),
       },
     ],
+
     [category.name, data?.events]
   )
 
@@ -169,6 +165,15 @@ export const CategoryPageContent = ({
     },
   })
 
+  const router = useRouter()
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.set("page", (pagination.pageIndex + 1).toString())
+    searchParams.set("limit", pagination.pageSize.toString())
+    router.push(`?${searchParams.toString()}`, { scroll: false })
+  }, [pagination, router])
+
   const numericFieldSums = useMemo(() => {
     if (!data?.events || data.events.length === 0) return {}
 
@@ -176,9 +181,9 @@ export const CategoryPageContent = ({
       string,
       {
         total: number
-        today: number
         thisWeek: number
         thisMonth: number
+        today: number
       }
     > = {}
 
@@ -192,7 +197,7 @@ export const CategoryPageContent = ({
       Object.entries(event.fields as object).forEach(([field, value]) => {
         if (typeof value === "number") {
           if (!sums[field]) {
-            sums[field] = { total: 0, today: 0, thisWeek: 0, thisMonth: 0 }
+            sums[field] = { total: 0, thisWeek: 0, thisMonth: 0, today: 0 }
           }
 
           sums[field].total += value
@@ -225,7 +230,7 @@ export const CategoryPageContent = ({
     if (Object.keys(numericFieldSums).length === 0) return null
 
     return Object.entries(numericFieldSums).map(([field, sums]) => {
-      const relevantSums =
+      const relevantSum =
         activeTab === "today"
           ? sums.today
           : activeTab === "week"
@@ -238,11 +243,11 @@ export const CategoryPageContent = ({
             <p className="text-sm/6 font-medium">
               {field.charAt(0).toUpperCase() + field.slice(1)}
             </p>
-            <BarChart className="text-muted-foreground size-4" />
+            <BarChart className="size-4 text-muted-foreground" />
           </div>
 
           <div>
-            <p className="text-2xl font-bold">{relevantSums.toFixed(2)}</p>
+            <p className="text-2xl font-bold">{relevantSum.toFixed(2)}</p>
             <p className="text-xs/5 text-muted-foreground">
               {activeTab === "today"
                 ? "today"
@@ -254,6 +259,10 @@ export const CategoryPageContent = ({
         </Card>
       )
     })
+  }
+
+  if (!pollingData.hasEvents) {
+    return <EmptyCategoryState categoryName={category.name} />
   }
 
   return (
@@ -275,7 +284,7 @@ export const CategoryPageContent = ({
             <Card className="border-2 border-brand-700">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <p className="text-sm/6 font-medium">Total Events</p>
-                <BarChart className="text-muted-foreground size-4" />
+                <BarChart className="size-4 text-muted-foreground" />
               </div>
 
               <div>
@@ -299,7 +308,7 @@ export const CategoryPageContent = ({
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="w-full flex flex-col gap-4">
-            <Heading className="text-3xl">Events Overview</Heading>
+            <Heading className="text-3xl">Event overview</Heading>
           </div>
         </div>
 
@@ -352,7 +361,7 @@ export const CategoryPageContent = ({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No Results.
+                    No results.
                   </TableCell>
                 </TableRow>
               )}
